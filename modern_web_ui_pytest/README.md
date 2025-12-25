@@ -167,3 +167,45 @@ class WebUser(HttpUser):
 ```
 locust -H https://the-internet.herokuapp.com
 ```
+
+## Git 上傳常見問題（non-fast-forward / rebase 衝突）
+
+### 問題 1：`git push` 被拒絕（non-fast-forward）
+
+原因：遠端 `main` 有你本地沒有的提交。
+
+解法（保留遠端內容）：
+```
+git pull --rebase origin main
+git push origin main
+```
+
+### 問題 2：`git pull --rebase` 發生衝突
+
+步驟：
+1) 先決定保留本地或遠端版本  
+2) 解完衝突後 `git add`  
+3) `git rebase --continue`  
+
+保留本地版本（rebase 中 `--theirs` = 你的本地提交）：
+```
+git checkout --theirs <conflicted_files>
+git add <conflicted_files>
+git rebase --continue
+```
+
+保留遠端版本（rebase 中 `--ours` = origin/main）：
+```
+git checkout --ours <conflicted_files>
+git add <conflicted_files>
+git rebase --continue
+```
+
+### 問題 3：`git rebase --continue` 停在編輯器
+
+代表 Git 正在等待你確認 commit message。請依你使用的編輯器關閉即可：
+
+- Vim：`:wq`  
+- Nano：`Ctrl+O` → Enter → `Ctrl+X`  
+- VS Code：存檔後關閉  
+- Notepad：存檔並關閉
